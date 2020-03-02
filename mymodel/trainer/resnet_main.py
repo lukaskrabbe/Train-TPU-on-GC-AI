@@ -473,12 +473,19 @@ def resnet_model_fn(features, labels, mode, params):
       """
       predictions = tf.argmax(logits, axis=1)
       top_1_accuracy = tf.metrics.accuracy(labels, predictions)
+    
+      precision = tf.compat.v1.metrics.precision(labels, predictions)
+    
+      recall = tf.compat.v1.metrics.recall(labels, predictions)
+    
       in_top_5 = tf.cast(tf.nn.in_top_k(logits, labels, 5), tf.float32)
       top_5_accuracy = tf.metrics.mean(in_top_5)
 
       return {
           'top_1_accuracy': top_1_accuracy,
           'top_5_accuracy': top_5_accuracy,
+          'precision': precision,
+          'recall': recall,
       }
 
     eval_metrics = (metric_fn, [labels, logits])

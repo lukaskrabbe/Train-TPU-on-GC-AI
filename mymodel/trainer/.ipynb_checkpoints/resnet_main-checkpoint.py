@@ -31,19 +31,19 @@ print(os.listdir("/root/.local/lib/python3.5/site-packages/trainer/"))
 print(os.listdir("/root/.local/lib/python3.5/site-packages/"))
 
 
-from other_subpackage.common import inference_warmup
-from other_subpackage.common import tpu_profiler_hook
+from common import inference_warmup
+from common import tpu_profiler_hook
 
-from other_subpackage.hyperparameters import common_hparams_flags
-from other_subpackage.hyperparameters import common_tpu_flags
-from other_subpackage.hyperparameters import flags_to_params
-from other_subpackage.hyperparameters import params_dict
+from hyperparameters import common_hparams_flags
+from hyperparameters import common_tpu_flags
+from hyperparameters import flags_to_params
+from hyperparameters import params_dict
 
 from trainer import imagenet_input
 from trainer import lars_util
 from trainer import resnet_model
 
-from other_subpackage.configs import resnet_config
+from configs import resnet_config
 
 from tensorflow.contrib import summary
 from tensorflow.contrib.tpu.python.tpu import async_checkpoint
@@ -473,12 +473,19 @@ def resnet_model_fn(features, labels, mode, params):
       """
       predictions = tf.argmax(logits, axis=1)
       top_1_accuracy = tf.metrics.accuracy(labels, predictions)
+    
+      precision = tf.compat.v1.metrics.precision(labels, predictions)
+    
+      recall = tf.compat.v1.metrics.recall(labels, predictions)
+    
       in_top_5 = tf.cast(tf.nn.in_top_k(logits, labels, 5), tf.float32)
       top_5_accuracy = tf.metrics.mean(in_top_5)
 
       return {
           'top_1_accuracy': top_1_accuracy,
           'top_5_accuracy': top_5_accuracy,
+          'precision': precision,
+          'recall': recall,
       }
 
     eval_metrics = (metric_fn, [labels, logits])
