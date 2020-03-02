@@ -76,7 +76,8 @@ def _convert_to_example(filename, image_buffer, label_int, label_str, height,
               'image/width': _int64_feature(width),
               'image/colorspace': _bytes_feature(colorspace),
               'image/channels': _int64_feature(channels),
-              'image/class/label': _int64_feature(label_int + 1),  # model expects 1-based
+              'image/class/label': _int64_feature(label_int +
+                                                  1),  # model expects 1-based
               'image/class/synset': _bytes_feature(label_str),
               'image/format': _bytes_feature(image_format),
               'image/filename': _bytes_feature(os.path.basename(filename)),
